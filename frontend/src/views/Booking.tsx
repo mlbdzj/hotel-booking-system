@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Button, Card, Select, Table, Tag, type TableColumnsType } from 'antd'
+import { Button, Card, Select, Table, Tag, theme, type TableColumnsType } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 import { bookingApi, hotelApi } from '@/api'
@@ -15,6 +15,7 @@ const STATUS_OPTIONS = Object.entries(BOOKING_STATUS_TEXT).map(([value, label]) 
 
 export default function Booking() {
   const [loading, setLoading] = useState(false)
+  const { token } = theme.useToken()
   const [records, setRecords] = useState<BookingRecord[]>([])
   const [total, setTotal] = useState(0)
   const [hotels, setHotels] = useState<Hotel[]>([])
@@ -69,16 +70,16 @@ export default function Booking() {
   const columns: TableColumnsType<BookingRecord> = [
     {
       title: '酒店 / 房型',
-      width: 200,
+      width: 190,
       ellipsis: true,
       render: (_, row) => (
         <div>
           <div>{row.hotel_name}</div>
-          <div style={{ color: '#909399', fontSize: 12 }}>{row.room_type_name}</div>
+          <div style={{ color: token.colorTextTertiary, fontSize: 12 }}>{row.room_type_name}</div>
         </div>
       ),
     },
-    { title: '入住 / 退房', width: 190, render: (_, row) => stayRange(row) },
+    { title: '入住 / 退房', width: 180, render: (_, row) => stayRange(row) },
     { title: '间数 / 人数', width: 110, render: (_, row) => `${row.rooms} 间 / ${row.guests} 人` },
     { title: '总价', width: 100, render: (_, row) => money(row.total_amount) },
     {
@@ -110,7 +111,7 @@ export default function Booking() {
             取消订单
           </Button>
         ) : (
-          <span style={{ color: '#c0c4cc' }}>-</span>
+          <span style={{ color: token.colorTextQuaternary }}>-</span>
         ),
     },
   ]
@@ -142,7 +143,7 @@ export default function Booking() {
           loading={loading}
           columns={columns}
           dataSource={records}
-          scroll={{ x: 1100 }}
+          scroll={{ x: 1080 }}
           locale={{ emptyText: '暂无订单，去「酒店管理」预订一间吧' }}
           pagination={{
             current: page,

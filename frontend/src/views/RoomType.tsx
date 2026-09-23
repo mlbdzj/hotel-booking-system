@@ -117,22 +117,22 @@ export default function RoomType() {
   }
 
   const columns: TableColumnsType<RoomTypeRecord> = [
-    { title: '房型名称', dataIndex: 'name', width: 130, ellipsis: true },
-    { title: '房型编号', dataIndex: 'code', width: 120 },
-    { title: '床型', dataIndex: 'bed_type', width: 130, ellipsis: true },
-    { title: '所属酒店', dataIndex: 'hotel_name', width: 170, ellipsis: true },
-    { title: '价格/晚', width: 100, render: (_, row) => money(row.price) },
-    { title: '可住人数', dataIndex: 'capacity', width: 100 },
-    { title: '房量', dataIndex: 'quantity', width: 80 },
+    { title: '房型名称', dataIndex: 'name', width: 120, ellipsis: true },
+    { title: '房型编号', dataIndex: 'code', width: 110 },
+    { title: '床型', dataIndex: 'bed_type', width: 110, ellipsis: true },
+    { title: '所属酒店', dataIndex: 'hotel_name', width: 140, ellipsis: true },
+    { title: '价格/晚', width: 90, render: (_, row) => money(row.price) },
+    { title: '可住人数', dataIndex: 'capacity', width: 90 },
+    { title: '房量', dataIndex: 'quantity', width: 70 },
     {
       title: '状态',
-      width: 100,
+      width: 90,
       render: (_, row) => <Tag color={ROOM_TYPE_STATUS_COLOR[row.status]}>{ROOM_TYPE_STATUS_TEXT[row.status]}</Tag>,
     },
-    { title: '说明', dataIndex: 'description', width: 160, ellipsis: true },
+    { title: '说明', dataIndex: 'description', width: 140, ellipsis: true },
     {
       title: '操作',
-      width: 130,
+      width: 110,
       fixed: 'right',
       render: (_, row) => (
         <>
@@ -190,7 +190,7 @@ export default function RoomType() {
           loading={loading}
           columns={columns}
           dataSource={records}
-          scroll={{ x: 1300 }}
+          scroll={{ x: 1070 }}
           locale={{ emptyText: '暂无房型数据' }}
           pagination={{
             current: query.page,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { DatePicker, Form, Input, InputNumber, Modal, Select, Tag } from 'antd'
+import { DatePicker, Form, Input, InputNumber, Modal, Select, Tag, theme } from 'antd'
 import dayjs, { type Dayjs } from 'dayjs'
 
 import { bookingApi, hotelApi } from '@/api'
@@ -36,6 +36,7 @@ const roomTypeLabel = (item: AvailabilityRoomType) =>
 
 export default function BookingDialog({ open, hotel, hotels = [], onClose, onSuccess }: BookingDialogProps) {
   const [form] = Form.useForm<BookingFormValues>()
+  const { token } = theme.useToken()
   const [submitting, setSubmitting] = useState(false)
   const [availabilityLoading, setAvailabilityLoading] = useState(false)
   const [hotelList, setHotelList] = useState<Hotel[]>([])
@@ -257,16 +258,16 @@ export default function BookingDialog({ open, hotel, hotels = [], onClose, onSuc
 
         <Form.Item label="费用预估">
           {nights > 0 && selectedRoomType ? (
-            <div style={{ color: '#303133' }}>
+            <div style={{ color: token.colorText }}>
               共 <b>{nights}</b> 晚 · <b>{currentRooms}</b> 间 · 总价{' '}
-              <b style={{ color: '#f56c6c', fontSize: 16 }}>{money(totalAmount)}</b>
-              <div style={{ marginTop: 4, color: '#909399', fontSize: 12 }}>
+              <b style={{ color: token.colorError, fontSize: 16 }}>{money(totalAmount)}</b>
+              <div style={{ marginTop: 4, color: token.colorTextTertiary, fontSize: 12 }}>
                 入住 {availability?.check_in_time || '-'} 之后，退房 {availability?.check_out_time || '-'}{' '}
                 之前，房价未含到店可能产生的押金与加床费用
               </div>
             </div>
           ) : (
-            <span style={{ color: '#909399' }}>请选择酒店、日期与房型</span>
+            <span style={{ color: token.colorTextTertiary }}>请选择酒店、日期与房型</span>
           )}
         </Form.Item>
 
@@ -280,7 +281,7 @@ export default function BookingDialog({ open, hotel, hotels = [], onClose, onSuc
               ))}
             </div>
           ) : (
-            <span style={{ color: '#909399' }}>选择日期后显示房型与剩余房量</span>
+            <span style={{ color: token.colorTextTertiary }}>选择日期后显示房型与剩余房量</span>
           )}
         </Form.Item>
       </Form>

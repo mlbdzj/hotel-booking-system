@@ -15,6 +15,7 @@ import {
   Switch,
   Table,
   Tag,
+  theme,
   TimePicker,
   type TableColumnsType,
 } from 'antd'
@@ -48,6 +49,7 @@ interface HotelFormValues extends Omit<HotelPayload, 'status' | 'check_in_time' 
 
 export default function Hotel() {
   const isAdmin = useUserStore((state) => state.user?.role === 'admin')
+  const { token } = theme.useToken()
 
   const [loading, setLoading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -153,28 +155,28 @@ export default function Hotel() {
   }
 
   const columns: TableColumnsType<HotelRecord> = [
-    { title: '酒店名称', dataIndex: 'name', width: 180, ellipsis: true },
-    { title: '城市', dataIndex: 'city', width: 90 },
+    { title: '酒店名称', dataIndex: 'name', width: 170, ellipsis: true },
+    { title: '城市', dataIndex: 'city', width: 80 },
     { title: '地址', dataIndex: 'address', width: 180, ellipsis: true },
-    { title: '星级', width: 90, render: (_, row) => `${row.star} 星` },
-    { title: '客房数', dataIndex: 'room_count', width: 90 },
+    { title: '星级', width: 80, render: (_, row) => `${row.star} 星` },
+    { title: '客房数', dataIndex: 'room_count', width: 80 },
     {
       title: '入住/退房',
-      width: 130,
+      width: 120,
       render: (_, row) => `${row.check_in_time} / ${row.check_out_time}`,
     },
-    { title: '房型', dataIndex: 'room_type_count', width: 80 },
-    { title: '订单', dataIndex: 'booking_count', width: 80 },
+    { title: '房型', dataIndex: 'room_type_count', width: 70 },
+    { title: '订单', dataIndex: 'booking_count', width: 70 },
     {
       title: '状态',
-      width: 100,
+      width: 90,
       render: (_, row) => (
         <Tag color={row.status === 1 ? 'success' : 'default'}>{row.status === 1 ? '营业中' : '暂停营业'}</Tag>
       ),
     },
     {
       title: '操作',
-      width: 190,
+      width: 150,
       fixed: 'right',
       render: (_, row) => (
         <>
@@ -230,7 +232,7 @@ export default function Hotel() {
             loading={loading}
             columns={columns}
             dataSource={hotels}
-            scroll={{ x: 1300 }}
+            scroll={{ x: 1090 }}
             locale={{ emptyText: '暂无酒店数据' }}
             pagination={{
               current: query.page,
@@ -254,7 +256,7 @@ export default function Hotel() {
                       {item.status === 1 ? '营业中' : '暂停营业'}
                     </Tag>
                   </div>
-                  <div style={{ marginTop: 10, color: '#606266', lineHeight: '24px' }}>
+                  <div style={{ marginTop: 10, color: token.colorTextSecondary, lineHeight: '24px' }}>
                     <div>
                       <EnvironmentOutlined /> {item.city} · {item.address || '地址待补充'}
                     </div>
@@ -268,7 +270,9 @@ export default function Hotel() {
                       <AppstoreOutlined /> 可预订房型 {item.room_type_count} 种
                     </div>
                   </div>
-                  <div style={{ marginTop: 10, color: '#909399', minHeight: 40 }}>{item.description}</div>
+                  <div style={{ marginTop: 10, color: token.colorTextTertiary, minHeight: 40 }}>
+                    {item.description}
+                  </div>
                   <Button
                     type="primary"
                     block

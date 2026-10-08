@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, or_, select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import func, or_, select, update
+from sqlalchemy.orm import Session
 
 from app.api.deps import require_admin
 from app.core.security import hash_password
 from app.db.session import get_db
-from app.models import Booking, User
+from app.models import Booking, ChatSession, User
 from app.schemas.common import Message, Page
 from app.schemas.user import PasswordUpdate, UserCreate, UserOut, UserUpdate
 
@@ -108,15 +108,15 @@ def delete_user(
     if user.id == current_user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="不能删除当前登录账号")
 
-    # 同步清理该用户的订单记录，避免外键约束导致删除失败
-    bookings = db.scalars(
-        select(Booking)
-        .options(selectinload(Booking.room_types))
-        .where(Booking.user_id == user_id)
-    ).all()
-    for booking in bookings:
-        booking.room_types = []
+    # 同步清理所有指向该用户的外键引用，避免约束导致删除失败：
+    # 1) 该用户作为下单人产生的订单记录；
+    for booking in db.scalars(select(Booking).where(Booking.user_id == user_id)).all():
         db.delete(booking)
+    # 2) 该用户作为审核人留下的引用（管理员被删除时可能命中），置空而非删除订单；
+    db.execute(update(Booking).where(Booking.reviewer_id == user_id).values(reviewer_id=None))
+    # 3) 该用户的客服对话记录（删除会话会级联删除其消息）。
+    for session in db.scalars(select(ChatSession).where(ChatSession.user_id == user_id)).all():
+        db.delete(session)
 
     db.delete(user)
     db.commit()
